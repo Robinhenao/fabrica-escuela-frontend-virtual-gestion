@@ -20,10 +20,10 @@ export interface Flight {
   porcentajeImpuestos: number
 }
 
-const API_VUELOS_URL = "https://fabrica-backend-virtual-production.up.railway.app/"
+const API_VUELOS_URL = 'https://fabrica-backend-virtual-production.up.railway.app/'
 
 export const fetchAllFlights = (page: number, size: number): Promise<FlightsResponse> => {
-  return axios.get<FlightsResponse>(`${API_VUELOS_URL}?page=${page}&size=${size}`).then(({ data }) => data)
+  return axios.get<FlightsResponse>(`${API_VUELOS_URL  + '/api/v1/vuelos'}?page=${page}&size=${size}`).then(({ data }) => data)
 }
 
 export const createFlight = (flight: Flight): Promise<void> => {
@@ -34,7 +34,7 @@ export const createFlight = (flight: Flight): Promise<void> => {
 
   return axios
     .post<void>(
-      `${API_VUELOS_URL}`,
+      `${API_VUELOS_URL + '/api/v1/vuelos'}`,
       { ...flight },
       {
         /* headers */
@@ -50,7 +50,7 @@ export const updateFlight = (flight: Flight): Promise<void> => {
 
   return axios
     .post<void>(
-      `${API_VUELOS_URL}`,
+      `${API_VUELOS_URL  + '/api/v1/vuelos'}`,
       { ...flight },
       {
         /* headers */
