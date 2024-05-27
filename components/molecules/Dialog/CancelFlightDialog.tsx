@@ -1,24 +1,43 @@
-import { FlightOperation } from "app/gestion/lista/page"
-import React, { Dispatch, SetStateAction } from "react"
+
+import { deleteFlight } from "app/api/gestion/gestion";
+import { FlightOperation } from "app/gestion/lista/page";
+import React, { Dispatch, SetStateAction } from "react";
+import { toast } from "react-toastify";
 
 type CancelFlightDialogProps = {
-  id?: number
-  setCurrentOperation: Dispatch<SetStateAction<FlightOperation>>
-  syncFlights: () => void
-}
+  id?: number;
+  setCurrentOperation: Dispatch<SetStateAction<FlightOperation>>;
+  syncFlights: () => void;
+};
 
 const CancelFlightDialog: React.FC<CancelFlightDialogProps> = ({ id, setCurrentOperation, syncFlights }) => {
   const handleCancelAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
-    event.preventDefault()
+    event.preventDefault();
     setCurrentOperation({
       id: -1,
       action: "",
-    })
-  }
+    });
+  };
 
-  const handleSubmit = () => {
-    //
-  }
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (id === undefined) {
+      toast.error("Flight ID is missing");
+      return;
+    }
+    return deleteFlight(id)
+      .then(() => {
+        toast.success("Flight successfully cancelled");
+        syncFlights();
+        setCurrentOperation({
+          id: -1,
+          action: "",
+        });
+      })
+      .catch((error) => {
+        toast.error(`Error canceling flight: ${error.message}`);
+      });
+  };
 
   return (
     <React.Fragment>
@@ -39,22 +58,7 @@ const CancelFlightDialog: React.FC<CancelFlightDialogProps> = ({ id, setCurrentO
                 Cancelar Vuelo
               </h3>
 
-              <form className="mt-4" action="#">
-                <label htmlFor="emails-list" className="text-sm text-gray-700 dark:text-gray-200">
-                  Motivo de cancelación
-                </label>
-
-                <label className="mt-3 block" htmlFor="justificacion">
-                  <textarea
-                    name="justificacion"
-                    cols={10}
-                    style={{ resize: "vertical" }}
-                    id="justificacion"
-                    value=""
-                    className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
-                  />
-                </label>
-
+              <form onSubmit={handleSubmit} className="mt-4" action="#">
                 <div className="mt-4 sm:-mx-2 sm:flex sm:items-center">
                   <button
                     type="button"
@@ -65,7 +69,7 @@ const CancelFlightDialog: React.FC<CancelFlightDialogProps> = ({ id, setCurrentO
                   </button>
 
                   <button
-                    type="button"
+                    type="submit"
                     className="mt-3 w-full transform rounded-md bg-blue-600 px-4 py-2 text-sm font-medium capitalize tracking-wide text-white transition-colors duration-300 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 sm:mx-2 sm:mt-0 sm:w-1/2"
                   >
                     Guardar
@@ -77,7 +81,8 @@ const CancelFlightDialog: React.FC<CancelFlightDialogProps> = ({ id, setCurrentO
         </div>
       </div>
     </React.Fragment>
-  )
-}
+  );
+};
 
-export default CancelFlightDialog
+export default CancelFlightDialog;
+

@@ -58,3 +58,13 @@ export const updateFlight = (flight: Flight): Promise<void> => {
     )
     .then(({ data }) => data)
 }
+
+export const deleteFlight = (flightID: number): Promise<void> => {
+  const options = {
+    method: "DELETE",
+    url: `${API_VUELOS_URL}/api/v1/vuelos/${flightID}`
+  }
+  return axios
+    .request(options)
+    .then(({ data }) => data)
+}
