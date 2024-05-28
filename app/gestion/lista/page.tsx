@@ -9,7 +9,7 @@ import FlightDialogs from "components/molecules/Dialog/FlightDialog"
 import Filters from "components/molecules/Filters/Filters"
 import Table from "components/molecules/Table/Table"
 
-export type Action = "CREATE" | "UPDATE" | "DELETE" | ""
+export type Action = "CREATE" | "UPDATE" | "DELETE" | "SEARCH" | ""
 
 export type FlightOperation = {
   flight?: Flight

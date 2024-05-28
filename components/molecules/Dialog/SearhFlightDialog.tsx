@@ -1,48 +1,19 @@
 import React, { Dispatch, SetStateAction, useEffect } from "react"
 
-import { toast } from "react-toastify"
-import { date, number, object, string } from "yup"
 
-import { createFlight, Flight, updateFlight } from "app/api/gestion/gestion"
+import { Flight } from "app/api/gestion/gestion"
 import { FlightOperation } from "app/gestion/lista/page"
 import useForm from "app/hooks/useForm"
 
-type CreateFlightDialogProps = {
-  action: "CREATE" | "UPDATE" | "SEARCH"
+type SearhFlightDialogProps = {
+  action: "SEARCH"
   flightToUpdate?: Flight
   setCurrentOperation: Dispatch<SetStateAction<FlightOperation>>
   syncFlights: () => void
 }
 
-const flightSchema = object({
-  numeroVuelo: string().required("El número de vuelo es requerido"),
-  tipoVuelo: string().required("El tipo de vuelo es requerido"),
-  idAeropuertoDestino: number()
-    .required("El Id del aeropuerto es requerido")
-    .min(1, "El Id del aeropuerto debe ser mayor a 0"),
-  idAeropuertoOrigen: number()
-    .required("El Id del aeropuerto de origen es requerido")
-    .min(1, "El Id del aeropuerto de origen debe ser mayor a 0"),
-  idTipoAvion: number()
-    .required("El Id del tipo de avión es requerido")
-    .min(1, "El Id del tipo de avión debe ser mayor a 0"),
-  fechaSalida: date()
-    .required("La fecha de salida es requerida")
-    .min(new Date(), "La fecha de salida debe ser mayor a la fecha actual"),
-  fechaLlegada: date()
-    .required("La fecha de llegada es requerida")
-    .min(new Date(), "La fecha de llegada debe ser mayor a la fecha actual"),
-  precio: number().required("El precio es requerido").min(0, "El precio debe ser mayor o igual a 0"),
-  cantidadPasajeros: number()
-    .required("La cantidad de pasajeros es requerida")
-    .min(1, "La cantidad de pasajeros debe ser mayor a 0"),
-  sobretasa: number().required("La sobretasa es requerida").min(0, "La sobretasa debe ser mayor o igual a 0"),
-  porcentajeImpuestos: number()
-    .required("El porcentaje de impuestos es requerido")
-    .min(0, "El porcentaje de impuestos debe ser mayor o igual a 0"),
-})
 
-const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ flightToUpdate, action, setCurrentOperation, syncFlights }) => {
+const SearhFlightDialog: React.FC<SearhFlightDialogProps> = ({ flightToUpdate, action, setCurrentOperation, syncFlights }) => {
   const { formValues, handleInputChange, resetForm } = useForm<Partial<Flight>>({})
 
   const {
@@ -55,9 +26,11 @@ const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ flightToUpdate,
     cantidadPasajeros,
     sobretasa,
     porcentajeImpuestos,
+    fechaSalida,
+    fechaLlegada
   } = formValues
 
-  const handleCancelAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
+  const handleOkAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     event.preventDefault()
     setCurrentOperation({
       action: "",
@@ -65,7 +38,7 @@ const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ flightToUpdate,
   }
 
   useEffect(() => {
-    if (action === 'UPDATE') {
+    if (action === 'SEARCH') {
         resetForm({
           ...flightToUpdate
       })
@@ -73,48 +46,8 @@ const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ flightToUpdate,
     }
   },[])
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    flightSchema
-      .validate(formValues, { abortEarly: false, disableStackTrace: true })
-      .then((flightToCreate) => {
-        if (action === "CREATE") {
-          // Create flight
-          return createFlight(flightToCreate)
-            .then(() => {
-              toast.success("Flight created successfully")
-              resetForm({})
-              syncFlights()
-              setCurrentOperation({
-                action: "",
-              })
-            })
-            .catch((error) => {
-              toast.error(`Error creating flight ${error.message}`)
-            })
-        }
 
-        if (action === "UPDATE") {
-          return updateFlight(flightToCreate)
-            .then(() => {
-              toast.success("Flight updated successfully")
-              resetForm({})
-              syncFlights()
-              setCurrentOperation({
-                action: "",
-              })
-            })
-            .catch((error) => {
-              toast.error(`Error updating flight ${error.message}`)
-            })
-        }
-      })
-      .catch(({ errors }: { errors: string[] }) => {
-        errors.forEach((msg) => {
-          toast.error(msg)
-        })
-      })
-  }
+ 
 console.log(flightToUpdate)
   return (
     <React.Fragment>
@@ -129,15 +62,13 @@ console.log(flightToUpdate)
                 className="text-center text-lg  font-medium capitalize leading-6 text-gray-800 dark:text-white"
                 id="modal-title"
               >
-                {action === "CREATE" ? "Create Flight" : "Update Flight"}
+                Flight information 
+                
               </h3>
-              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                Here you can {action === "CREATE" ? "create" : "update"} a flight
-              </p>
 
               <hr className="container my-3" />
 
-              <form onSubmit={handleSubmit} className="mt-4" action="#">
+              <form  className="mt-4" action="#">
                 <label htmlFor="numeroVuelo" className="text-sm text-gray-700 dark:text-gray-200">
                   Número de vuelo
                 </label>
@@ -148,7 +79,7 @@ console.log(flightToUpdate)
                     name="numeroVuelo"
                     id="numeroVuelo"
                     value={numeroVuelo}
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     placeholder="Ej: Vuelo-123"
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
@@ -163,7 +94,7 @@ console.log(flightToUpdate)
                     name="tipoVuelo"
                     id="tipoVuelo"
                     value={tipoVuelo}
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     placeholder="Ej: Internacional"
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
@@ -178,7 +109,7 @@ console.log(flightToUpdate)
                     name="idAeropuertoOrigen"
                     id="idAeropuertoOrigen"
                     value={idAeropuertoOrigen}
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     placeholder="Ej: 1"
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
@@ -193,7 +124,7 @@ console.log(flightToUpdate)
                     name="idAeropuertoDestino"
                     id="idAeropuertoDestino"
                     value={idAeropuertoDestino}
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     placeholder="Ej: 2"
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
@@ -208,7 +139,7 @@ console.log(flightToUpdate)
                     name="idTipoAvion"
                     id="idTipoAvion"
                     value={idTipoAvion}
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     placeholder="Ej: 2"
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
@@ -219,11 +150,11 @@ console.log(flightToUpdate)
                 </label>
                 <label className="block" htmlFor="fechaSalida">
                   <input
-                    type="datetime-local"
+                    type="text"
                     name="fechaSalida"
                     id="fechaSalida"
-                    // value={fechaSalida}
-                    onChange={handleInputChange}
+                    value={fechaSalida?.toLocaleString()}
+                    // onChange={handleInputChange}
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
                 </label>
@@ -233,11 +164,11 @@ console.log(flightToUpdate)
                 </label>
                 <label className="block" htmlFor="fechaLlegada">
                   <input
-                    type="datetime-local"
+                    type="text"
                     name="fechaLlegada"
                     id="fechaLlegada"
-                    // value={fechaSalida}
-                    onChange={handleInputChange}
+                    value={fechaLlegada?.toLocaleString()}
+                    // onChange={handleInputChange}
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
                 </label>
@@ -252,7 +183,7 @@ console.log(flightToUpdate)
                     id="precio"
                     value={precio}
                     placeholder="Ej: 1000"
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
                 </label>
@@ -267,7 +198,7 @@ console.log(flightToUpdate)
                     id="cantidadPasajeros"
                     value={cantidadPasajeros}
                     placeholder="Ej: 1000"
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
                 </label>
@@ -282,7 +213,7 @@ console.log(flightToUpdate)
                     id="sobretasa"
                     value={sobretasa}
                     placeholder="Ej: 5.2"
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
                 </label>
@@ -297,7 +228,7 @@ console.log(flightToUpdate)
                     id="porcentajeImpuestos"
                     value={porcentajeImpuestos}
                     placeholder="Ej: 10.5"
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
                     className="block w-full rounded-md border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"
                   />
                 </label>
@@ -305,17 +236,10 @@ console.log(flightToUpdate)
                 <div className="mt-4 sm:-mx-2 sm:flex sm:items-center">
                   <button
                     type="button"
-                    onClick={handleCancelAction}
-                    className="w-full transform rounded-md border border-gray-200 px-4 py-2 text-sm font-medium capitalize tracking-wide text-gray-700 transition-colors duration-300 hover:bg-gray-100 focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-40 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800 sm:mx-2 sm:w-1/2"
-                  >
-                    Cancel
-                  </button>
-
-                  <button
-                    type="submit"
+                    onClick={handleOkAction}
                     className="mt-3 w-full transform rounded-md bg-blue-600 px-4 py-2 text-sm font-medium capitalize tracking-wide text-white transition-colors duration-300 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 sm:mx-2 sm:mt-0 sm:w-1/2"
                   >
-                    Guardar
+                    Ok
                   </button>
                 </div>
               </form>
@@ -327,4 +251,4 @@ console.log(flightToUpdate)
   )
 }
 
-export default CreateFlightDialog
+export default SearhFlightDialog

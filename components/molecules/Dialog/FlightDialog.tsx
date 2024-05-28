@@ -3,6 +3,7 @@ import React, { Dispatch, SetStateAction } from "react"
 import { FlightOperation } from "app/gestion/lista/page"
 import CancelFlightDialog from "./CancelFlightDialog"
 import CreateFlightDialog from "./CreateFlightDialog"
+import SearhFlightDialog from "./SearhFlightDialog"
 
 type FlightDialogsProps = {
   currentOperation: FlightOperation
@@ -26,9 +27,16 @@ const FlightDialogs: React.FC<FlightDialogsProps> = (props) => {
     )
   }
 
+  if (action === "SEARCH") {
+    return (
+      <SearhFlightDialog  flightToUpdate={flight} syncFlights={syncFlights} action="SEARCH" setCurrentOperation={setCurrentOperation} />
+    )
+  }
+
   if (action === "DELETE") {
     return <CancelFlightDialog syncFlights={syncFlights} flight={flight} setCurrentOperation={setCurrentOperation} />
   }
+
 
   return <></>
 }

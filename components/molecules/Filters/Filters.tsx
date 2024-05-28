@@ -1,5 +1,5 @@
-import { fetchFlightbyNumeroVuelo } from "app/api/gestion/gestion"
-import { FlightOperation } from "app/gestion/lista/page"
+import { Flight, fetchFlightbyNumeroVuelo } from "app/api/gestion/gestion"
+import { Action, FlightOperation } from "app/gestion/lista/page"
 import useForm from "app/hooks/useForm"
 import React, { Dispatch, SetStateAction } from "react"
 
@@ -17,10 +17,17 @@ const Filters: React.FC<FiltersProps> = ({ setCurrentOperation }) => {
     })
   }
 
+  
+
   function handleSearch(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault()
+    
     fetchFlightbyNumeroVuelo(formValues.search).then((flight) => {
-      window.alert(JSON.stringify(flight))
+      //window.alert(JSON.stringify(flight))
+      setCurrentOperation({
+        flight,
+        action: "SEARCH",
+      })
     }).catch(() => {
       window.alert('Flight not found')
     })
