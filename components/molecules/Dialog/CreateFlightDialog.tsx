@@ -1,15 +1,15 @@
-import React, { Dispatch, SetStateAction } from "react"
+import React, { Dispatch, SetStateAction, useEffect } from "react"
 
 import { toast } from "react-toastify"
 import { date, number, object, string } from "yup"
 
-import { createFlight, Flight } from "app/api/gestion/gestion"
+import { createFlight, Flight, updateFlight } from "app/api/gestion/gestion"
 import { FlightOperation } from "app/gestion/lista/page"
 import useForm from "app/hooks/useForm"
 
 type CreateFlightDialogProps = {
   action: "CREATE" | "UPDATE"
-  id?: number
+  flightToUpdate?: Flight
   setCurrentOperation: Dispatch<SetStateAction<FlightOperation>>
   syncFlights: () => void
 }
@@ -42,7 +42,7 @@ const flightSchema = object({
     .min(0, "El porcentaje de impuestos debe ser mayor o igual a 0"),
 })
 
-const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ id, action, setCurrentOperation, syncFlights }) => {
+const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ flightToUpdate, action, setCurrentOperation, syncFlights }) => {
   const { formValues, handleInputChange, resetForm } = useForm<Partial<Flight>>({})
 
   const {
@@ -60,10 +60,18 @@ const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ id, action, set
   const handleCancelAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     event.preventDefault()
     setCurrentOperation({
-      id: -1,
       action: "",
     })
   }
+
+  useEffect(() => {
+    if (action === 'UPDATE') {
+        resetForm({
+          ...flightToUpdate
+      })
+
+    }
+  },[])
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -78,7 +86,6 @@ const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ id, action, set
               resetForm({})
               syncFlights()
               setCurrentOperation({
-                id: -1,
                 action: "",
               })
             })
@@ -88,7 +95,18 @@ const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ id, action, set
         }
 
         if (action === "UPDATE") {
-          // Update flight, use the id
+          return updateFlight(flightToCreate)
+            .then(() => {
+              toast.success("Flight updated successfully")
+              resetForm({})
+              syncFlights()
+              setCurrentOperation({
+                action: "",
+              })
+            })
+            .catch((error) => {
+              toast.error(`Error updating flight ${error.message}`)
+            })
         }
       })
       .catch(({ errors }: { errors: string[] }) => {
@@ -97,7 +115,7 @@ const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ id, action, set
         })
       })
   }
-
+console.log(flightToUpdate)
   return (
     <React.Fragment>
       <div className="relative flex justify-center">
@@ -106,7 +124,6 @@ const CreateFlightDialog: React.FC<CreateFlightDialogProps> = ({ id, action, set
             <span className="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">
               &#8203;
             </span>
-
             <div className="relative inline-block max-h-[85vh] overflow-auto rounded-lg bg-white px-4 pb-4 pt-5 text-left align-bottom shadow-xl transition-all dark:bg-gray-900 sm:my-8 sm:w-full sm:max-w-xl sm:p-6 sm:align-middle">
               <h3
                 className="text-center text-lg  font-medium capitalize leading-6 text-gray-800 dark:text-white"

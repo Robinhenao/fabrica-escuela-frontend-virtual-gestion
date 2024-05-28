@@ -1,4 +1,6 @@
+import { fetchFlightbyNumeroVuelo } from "app/api/gestion/gestion"
 import { FlightOperation } from "app/gestion/lista/page"
+import useForm from "app/hooks/useForm"
 import React, { Dispatch, SetStateAction } from "react"
 
 type FiltersProps = {
@@ -6,24 +8,37 @@ type FiltersProps = {
 }
 
 const Filters: React.FC<FiltersProps> = ({ setCurrentOperation }) => {
+  const { formValues, handleInputChange, resetForm } = useForm<{search: string}>({search: ""})
+
   const handleCreateFlight = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     event.preventDefault()
     setCurrentOperation({
-      id: -1,
       action: "CREATE",
+    })
+  }
+
+  function handleSearch(event: React.FormEvent<HTMLFormElement>): void {
+    event.preventDefault()
+    fetchFlightbyNumeroVuelo(formValues.search).then((flight) => {
+      window.alert(JSON.stringify(flight))
+    }).catch(() => {
+      window.alert('Flight not found')
     })
   }
 
   return (
     <React.Fragment>
       <section className="mx-auto rounded-md bg-white px-20  py-5 dark:bg-gray-800">
-        <form>
+        <form onSubmit={handleSearch}>
           <div className="mt-4 grid grid-cols-1 gap-10 px-5 sm:grid-cols-2">
             <div>
               <label className="text-gray-700 dark:text-gray-200" htmlFor="no-vuelo">
                 No Vuelo
               </label>
               <input
+              name="search"
+              value={formValues.search}
+              onChange={handleInputChange}
                 id="no-vuelo"
                 type="text"
                 className="focus:ring-opacity-40/40 mt-2 block w-full rounded-md border border-gray-200 bg-white px-4 py-2 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-300"

@@ -24,9 +24,9 @@ const Table: React.FC<TableProps> = ({ setCurrentOperation, pagination, setPagin
 
   const { vuelos, totalItems } = flightsResponse
 
-  const handleOpenModal = (id: number, action: Action): void => {
+  const handleOpenModal = (flight: Flight, action: Action): void => {
     setCurrentOperation({
-      id,
+      flight,
       action,
     })
   }
@@ -120,19 +120,19 @@ const Table: React.FC<TableProps> = ({ setCurrentOperation, pagination, setPagin
                 <td className="border-b border-gray-200 bg-white px-5 py-5 text-sm">{row.porcentajeImpuestos}</td>
                 <td className="flex flex-col space-y-2 border-b border-gray-200 bg-white px-5 py-5 text-sm">
                   <button
-                    onClick={() => handleOpenModal(row.id!, "UPDATE")}
+                    onClick={() => handleOpenModal(row, "UPDATE")}
                     className=" mx-1 rounded-full border-l bg-blue-500 px-5 py-2 text-white"
                   >
                     Details
                   </button>
                   <button
-                    onClick={() => handleOpenModal(row.id!, "UPDATE")}
+                    onClick={() => handleOpenModal(row, "UPDATE")}
                     className=" mx-1 rounded-full border-l bg-yellow-500 px-5 py-2 text-white"
                   >
                     Update
                   </button>
                   <button
-                    onClick={() => handleOpenModal(row.id!, "DELETE")}
+                    onClick={() => handleOpenModal(row, "DELETE")}
                     className="bold mx-1 rounded-full bg-red-500 px-5 py-2 text-white"
                   >
                     Cancel

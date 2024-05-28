@@ -12,7 +12,7 @@ type FlightDialogsProps = {
 
 const FlightDialogs: React.FC<FlightDialogsProps> = (props) => {
   const { currentOperation, setCurrentOperation, syncFlights } = props
-  const { id, action } = currentOperation
+  const { flight, action } = currentOperation
 
   if (action === "") return <></>
 
@@ -22,12 +22,12 @@ const FlightDialogs: React.FC<FlightDialogsProps> = (props) => {
 
   if (action === "UPDATE") {
     return (
-      <CreateFlightDialog syncFlights={syncFlights} action="UPDATE" setCurrentOperation={setCurrentOperation} id={id} />
+      <CreateFlightDialog flightToUpdate={flight} syncFlights={syncFlights} action="UPDATE" setCurrentOperation={setCurrentOperation} />
     )
   }
 
   if (action === "DELETE") {
-    return <CancelFlightDialog syncFlights={syncFlights} id={id} setCurrentOperation={setCurrentOperation} />
+    return <CancelFlightDialog syncFlights={syncFlights} flight={flight} setCurrentOperation={setCurrentOperation} />
   }
 
   return <></>

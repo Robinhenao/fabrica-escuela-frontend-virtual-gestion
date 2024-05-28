@@ -26,6 +26,10 @@ export const fetchAllFlights = (page: number, size: number): Promise<FlightsResp
   return axios.get<FlightsResponse>(`${API_VUELOS_URL  + '/api/v1/vuelos'}?page=${page}&size=${size}`).then(({ data }) => data)
 }
 
+export const fetchFlightbyNumeroVuelo = (numeroVuelo: string): Promise<Flight> => {
+  return axios.get<Flight>(`${API_VUELOS_URL  + '/api/v1/vuelos'}/${numeroVuelo}`).then(({ data }) => data)
+}
+
 export const createFlight = (flight: Flight): Promise<void> => {
   // TODO: Enviar token en el header
   // const headers = {
@@ -49,7 +53,7 @@ export const updateFlight = (flight: Flight): Promise<void> => {
   // }
 
   return axios
-    .post<void>(
+    .put<void>(
       `${API_VUELOS_URL  + '/api/v1/vuelos'}`,
       { ...flight },
       {

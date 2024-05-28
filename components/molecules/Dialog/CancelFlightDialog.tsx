@@ -1,36 +1,34 @@
 
-import { deleteFlight } from "app/api/gestion/gestion";
+import { Flight, deleteFlight } from "app/api/gestion/gestion";
 import { FlightOperation } from "app/gestion/lista/page";
 import React, { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 
 type CancelFlightDialogProps = {
-  id?: number;
+  flight?: Flight;
   setCurrentOperation: Dispatch<SetStateAction<FlightOperation>>;
   syncFlights: () => void;
 };
 
-const CancelFlightDialog: React.FC<CancelFlightDialogProps> = ({ id, setCurrentOperation, syncFlights }) => {
+const CancelFlightDialog: React.FC<CancelFlightDialogProps> = ({ flight, setCurrentOperation, syncFlights }) => {
   const handleCancelAction = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void => {
     event.preventDefault();
     setCurrentOperation({
-      id: -1,
       action: "",
     });
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (id === undefined) {
+    if (flight?.id === undefined) {
       toast.error("Flight ID is missing");
       return;
     }
-    return deleteFlight(id)
+    return deleteFlight(flight.id)
       .then(() => {
         toast.success("Flight successfully cancelled");
         syncFlights();
         setCurrentOperation({
-          id: -1,
           action: "",
         });
       })

@@ -4,7 +4,7 @@ import { Fragment, useEffect, useState } from "react"
 
 import { toast, ToastContainer } from "react-toastify"
 
-import { fetchAllFlights, FlightsResponse } from "app/api/gestion/gestion"
+import { fetchAllFlights, Flight, FlightsResponse } from "app/api/gestion/gestion"
 import FlightDialogs from "components/molecules/Dialog/FlightDialog"
 import Filters from "components/molecules/Filters/Filters"
 import Table from "components/molecules/Table/Table"
@@ -12,7 +12,7 @@ import Table from "components/molecules/Table/Table"
 export type Action = "CREATE" | "UPDATE" | "DELETE" | ""
 
 export type FlightOperation = {
-  id: number
+  flight?: Flight
   action: Action
 }
 
@@ -27,7 +27,6 @@ export default function ListadoGestion() {
   })
   const { page, size } = pagination
   const [currentOperation, setCurrentOperation] = useState<FlightOperation>({
-    id: -1,
     action: "",
   })
 
