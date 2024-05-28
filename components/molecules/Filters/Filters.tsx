@@ -1,5 +1,5 @@
-import { Flight, fetchFlightbyNumeroVuelo } from "app/api/gestion/gestion"
-import { Action, FlightOperation } from "app/gestion/lista/page"
+import { fetchFlightbyNumeroVuelo } from "app/api/gestion/gestion"
+import { FlightOperation } from "app/gestion/lista/page"
 import useForm from "app/hooks/useForm"
 import React, { Dispatch, SetStateAction } from "react"
 
