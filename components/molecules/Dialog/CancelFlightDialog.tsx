@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from "react";
-import { Flight, deleteFlight } from "app/api/gestion/gestion";
+import { Flight, deleteFlight } from "app/api/gestion";
 import { FlightOperation } from "app/gestion/lista/page";
 import { toast } from "react-toastify";
 
