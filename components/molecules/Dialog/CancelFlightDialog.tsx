@@ -1,7 +1,7 @@
-import React, { Dispatch, SetStateAction } from "react";
 import { Flight, deleteFlight } from "app/api/gestion/gestion";
 import { FlightOperation } from "app/gestion/lista/page";
-import { toast } from "react-toastify";
+import React, { Dispatch, SetStateAction } from "react";
+import { toast } from "react-toastify"
 
 type CancelFlightDialogProps = {
   flight?: Flight;
