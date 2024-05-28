@@ -72,7 +72,7 @@ const CancelFlightDialog: React.FC<CancelFlightDialogProps> = ({ id, setCurrentO
                     type="submit"
                     className="mt-3 w-full transform rounded-md bg-blue-600 px-4 py-2 text-sm font-medium capitalize tracking-wide text-white transition-colors duration-300 hover:bg-blue-500 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 sm:mx-2 sm:mt-0 sm:w-1/2"
                   >
-                    Guardar
+                    Confirmar
                   </button>
                 </div>
               </form>
